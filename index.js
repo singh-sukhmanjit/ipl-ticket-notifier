@@ -1,3 +1,7 @@
+const express = require('express');
+const app = express();
+const port = 3000;
+
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const url =
@@ -29,5 +33,9 @@ const checkAvailability = async () => {
       browser.close();
     });
 };
-checkAvailability();
-// setInterval(checkAvailability, 100);
+app.listen(port, () => {
+  console.log(`App running on port ${port}`);
+  console.log('testing env var sample', process.env.sample);
+  checkAvailability();
+  // setInterval(checkAvailability, 100);
+});
