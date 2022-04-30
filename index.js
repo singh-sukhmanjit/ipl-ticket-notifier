@@ -1,11 +1,17 @@
 const express = require('express');
 const app = express();
-const port = 3000;
-
+const dotenv = require('dotenv');
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
+const sgMail = require('@sendgrid/mail');
+
+dotenv.config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const url =
   'https://in.bookmyshow.com/sports/tata-indian-premier-league-2022/ET00325171';
+const port = process.env.PORT;
+
 const checkAvailability = async () => {
   const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   browser
@@ -24,7 +30,22 @@ const checkAvailability = async () => {
           t.includes('27 May') ||
           t.includes('29 May')
       );
-      console.log({ linkTexts });
+      const msg = {
+        to: process.env.RECIPIENT,
+        from: process.env.SENDER,
+        subject: 'IPL ticket notifier',
+        text: linkTexts.length
+          ? 'IPL Qualifier tickets are available now'
+          : 'IPL Qualifier tickets are not yet available',
+      };
+      sgMail
+        .send(msg)
+        .then(() => {
+          console.log('Email sent');
+        })
+        .catch((error) => {
+          console.error('Failed to send email', error);
+        });
     })
     .catch((err) => {
       console.error('Some error occured', err);
@@ -40,7 +61,6 @@ app.use('/', (_req, res) => {
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
-  console.log('testing env var sample', process.env.sample);
   checkAvailability();
-  // setInterval(checkAvailability, 100);
+  setInterval(checkAvailability, process.env.NOTIFICATION_INTERVAL);
 });
