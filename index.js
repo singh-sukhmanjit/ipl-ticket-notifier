@@ -2,10 +2,10 @@ const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const url =
   'https://in.bookmyshow.com/sports/tata-indian-premier-league-2022/ET00325171';
-const checkAvailability = () => {
-  puppeteer
-    .launch()
-    .then((browser) => browser.newPage())
+const checkAvailability = async () => {
+  const browser = await puppeteer.launch();
+  browser
+    .newPage()
     .then((page) => page.goto(url).then(() => page.content()))
     .then((html) => {
       const $ = cheerio.load(html);
@@ -24,6 +24,10 @@ const checkAvailability = () => {
     })
     .catch((err) => {
       console.error('Some error occured', err);
+    })
+    .finally(() => {
+      browser.close();
     });
 };
-setInterval(checkAvailability, 1000 * 60 * 30);
+checkAvailability();
+// setInterval(checkAvailability, 100);
