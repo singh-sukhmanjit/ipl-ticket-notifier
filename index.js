@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const url =
   'https://in.bookmyshow.com/sports/tata-indian-premier-league-2022/ET00325171';
 const checkAvailability = async () => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   browser
     .newPage()
     .then((page) => page.goto(url).then(() => page.content()))
