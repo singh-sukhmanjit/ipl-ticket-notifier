@@ -33,6 +33,11 @@ const checkAvailability = async () => {
       browser.close();
     });
 };
+
+app.use('/', (_req, res) => {
+  res.send('Working fine');
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
   console.log('testing env var sample', process.env.sample);
