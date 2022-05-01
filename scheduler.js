@@ -1,8 +1,8 @@
 const cron = require('node-cron');
 const shell = require('shelljs');
 
-console.log('Scheduler running every 30 seconds');
-cron.schedule('*/30 * * * * *', () => {
+console.log('Scheduler running every 30 minutes');
+cron.schedule('*/30 * * * *', () => {
   if (shell.exec('node index').code !== 0) {
     shell.echo('Notifier failed to executed');
     shell.exit(1);
