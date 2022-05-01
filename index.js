@@ -33,7 +33,9 @@ const checkAvailability = async () => {
       const msg = {
         to: process.env.RECIPIENT,
         from: process.env.SENDER,
-        subject: 'IPL ticket notifier',
+        subject: `IPL tickets ${
+          linkTexts.length ? 'available' : 'not available'
+        }`,
         text: linkTexts.length
           ? 'IPL Qualifier tickets are available now'
           : 'IPL Qualifier tickets are not yet available',
@@ -45,6 +47,9 @@ const checkAvailability = async () => {
         })
         .catch((error) => {
           console.error('Failed to send email', error);
+        })
+        .finally(() => {
+          server.close();
         });
     })
     .catch((err) => {
@@ -55,12 +60,7 @@ const checkAvailability = async () => {
     });
 };
 
-app.use('/', (_req, res) => {
-  res.send('Working fine');
-});
-
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App running on port ${port}`);
   checkAvailability();
-  setInterval(checkAvailability, process.env.NOTIFICATION_INTERVAL);
 });
